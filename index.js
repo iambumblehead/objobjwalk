@@ -1,5 +1,5 @@
 
-var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (function () {
+var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (function (objobjwalk) {
 
   // Douglas Crockford's
   function isArray (obj) {
@@ -12,20 +12,53 @@ var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (functio
   };
   
   // recurse through array and object properties
-  return function objObjWalk (obj, fn) {
+  // objobjwalk.async(obj, function () { ... });
+  objobjwalk = function (obj, filterFn) {
     if (isArray(obj)) {
       obj.map(function (e) {
-        e = objobjwalk(e, fn);
+        e = objobjwalk(e, filterFn);
       });
     } else if (typeof obj === 'object' && obj) {
       for (var o in obj) {
         if (obj.hasOwnProperty(o)) {
-          obj[o] = objObjWalk(obj[o], fn);
+          obj[o] = objobjwalk(obj[o], filterFn);
         }
       }
-      obj = fn(obj);
+      obj = filterFn(obj);
     }
     return obj;
   };
+
+  // objobjwalk.async(
+  //   obj, 
+  //   function (exitFn) { ... }, 
+  //   function () { ... }
+  // );
+  objobjwalk.async = function (obj, filterFn, fn) {
+    var x, keys;
+
+    if (isArray(obj)) {
+      (function next (x) {
+        if (!x--) return fn(null, obj);
+        objobjwalk.async(obj[x], filterFn, function (err, res) {
+          if (err) return fn(err, obj[x]);          
+          next(x);
+        });
+      }(obj.length));
+    } else if (typeof obj === 'object' && obj) {
+      keys = Object.keys(obj);
+      (function next (x) {
+        if (!x--) return filterFn(obj, fn);
+        objobjwalk.async(obj[keys[x]], filterFn, function (err, res) {
+          if (err) return fn(err, obj[keys[x]]);          
+          next(x);
+        });
+      }(keys.length));
+    } else {
+      fn(null, obj);
+    }
+  };
+
+  return objobjwalk;
 
 }());

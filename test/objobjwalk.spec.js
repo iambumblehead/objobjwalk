@@ -32,3 +32,38 @@ describe("objobjwalk", function () {
   });
 
 });
+
+describe("objobjwalk.async", function () {
+  var result, resultExpected;
+
+  it("should find deeply nested object properties", function (done) {
+
+    objobjwalk.async({
+      a : {
+        b : [{
+          c : {
+            d : [{
+              type : 'deep object',
+              value : '1'
+            }],
+            e : [{
+              type : 'deep object',
+              value : '1'
+            }]
+          }
+        }]
+      }
+    }, function (obj, exitFn) {
+      if (obj.type === 'deep object') {
+        obj.value = '0';
+      }
+      exitFn(null, obj);
+    }, function (err, newObj) {
+      expect(newObj.a.b[0].c.d[0].value).toBe('0');
+      expect(newObj.a.b[0].c.e[0].value).toBe('0');
+      done();
+    });
+
+  });
+
+});
