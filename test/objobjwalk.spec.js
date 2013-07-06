@@ -66,4 +66,23 @@ describe("objobjwalk.async", function () {
 
   });
 
+
+  it("should redefine a full object", function (done) {
+    objobjwalk.async({
+      type: "single",
+      inputsArr: [{
+        type: "local-ref",
+        path: "./support/blog"
+      }]
+    }, function (obj, exitFn) {
+      if (obj.type === 'local-ref') {
+        obj = 'redefined';
+      }
+      exitFn(null, obj);
+    }, function (err, newObj) {
+      expect(newObj.inputsArr[0]).toBe('redefined');
+      done();
+    });
+  });
+
 });

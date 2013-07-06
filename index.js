@@ -42,6 +42,7 @@ var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (functio
         if (!x--) return fn(null, obj);
         objobjwalk.async(obj[x], filterFn, function (err, res) {
           if (err) return fn(err, obj[x]);          
+          obj[x] = res;
           next(x);
         });
       }(obj.length));
@@ -51,6 +52,7 @@ var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (functio
         if (!x--) return filterFn(obj, fn);
         objobjwalk.async(obj[keys[x]], filterFn, function (err, res) {
           if (err) return fn(err, obj[keys[x]]);          
+          obj[keys[x]] = res;
           next(x);
         });
       }(keys.length));
