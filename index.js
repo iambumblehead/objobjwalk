@@ -29,6 +29,17 @@ var objobjwalk = ((typeof module === 'object') ? module : {}).exports = (functio
     return obj;
   };
 
+  objobjwalk.type = function (type, obj, filterFn) {
+    return objobjwalk(obj, function (ob) {
+      for (var o in ob) {
+        if (ob.hasOwnProperty(o) && typeof ob[o] === type) {
+          ob[o] = filterFn(ob[o]);
+        }
+      }
+      return ob;
+    });
+  };
+
   // objobjwalk.async(
   //   obj, 
   //   function (exitFn) { ... }, 
