@@ -1,6 +1,10 @@
 // Filename: index.js  
-// Timestamp: 2016.11.16-15:57:02 (last modified)
+// Timestamp: 2017.04.09-00:45:01 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
+
+//setImmediate === 'object'
+//        ? setImmediate
+//        : setTimeout;
 
 const objobjwalk = module.exports = (objobjwalk => {
   
@@ -46,30 +50,33 @@ const objobjwalk = module.exports = (objobjwalk => {
   //   function (exitFn) { ... }, 
   //   function () { ... }
   // );
-  objobjwalk.async = function (obj, filterfn, fn) {
+  objobjwalk.async = (obj, filterfn, fn) => {
     var x, keys;
 
     if (Array.isArray(obj)) {
       (function next (x) {
         if (!x--) return fn(null, obj);
-        objobjwalk.async(obj[x], filterfn, function (err, res) {
+        objobjwalk.async(obj[x], filterfn, (err, res) => {
           if (err) return fn(err, obj[x]);          
           obj[x] = res;
-          setTimeout(() => next(x));
+          setImmediate(() => next(x));
         });
       }(obj.length));
     } else if (typeof obj === 'object' && obj) {
       keys = Object.keys(obj);
       (function next (x) {
         if (!x--) return filterfn(obj, fn);
-        objobjwalk.async(obj[keys[x]], filterfn, function (err, res) {
+        
+        objobjwalk.async(obj[keys[x]], filterfn, (err, res) => {
           if (err) return fn(err, obj[keys[x]]);          
           obj[keys[x]] = res;
-          setTimeout(() => next(x));
+          setImmediate(() => next(x));
         });
       }(keys.length));
     } else {
-      fn(null, obj);
+      filterfn(obj, (err, res) => {
+        fn(null, res);
+      });
     }
   };
 

@@ -1,23 +1,26 @@
 {
   "name": "objobjwalk",
-  "version": "0.0.6",
+  
+  "readmeFilename": "README.md",
+  "description": "walk the object definitions of an object, modify them with a function.",
+  
+  "version": "0.0.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/iambumblehead/objobjwalk.git"
   },
   "keywords": [
-      "object",
-      "properties",
-      "walk",
-      "recurse",
-      "deep"
+    "object",
+    "properties",
+    "walk",
+    "recurse",
+    "deep"
   ],
   "devDependencies" : {
-      "jasmine-node" : ">=1.3.0"
+    "jasmine": "2.5.3",
+    "jasmine-spec-reporter": "3.2.0"    
   },
   "scripts" : {
-      "test" : "node node_modules/jasmine-node/bin/jasmine-node --verbose test/"
-  },    
-  "readmeFilename": "README.md",
-  "description": "walk the object definitions of an object, modify them with a function. "
+    "test": "node node_modules/jasmine/bin/jasmine.js --verbose"
+  }
 }

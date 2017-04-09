@@ -1,9 +1,13 @@
-var objobjwalk = require('../index.js');
+// Filename: objobjwalk.spec.js  
+// Timestamp: 2017.04.09-01:29:48 (last modified)
+// Author(s): bumblehead <chris@bumblehead.com>
 
-describe("objobjwalk", function () {
+var objobjwalk = require('../');
+
+describe("objobjwalk", () => {
   var result, resultExpected;
 
-  it("should find deeply nested object properties", function () {
+  it("should find deeply nested object properties", () => {
 
     var newObj = objobjwalk({
       a : {
@@ -20,7 +24,7 @@ describe("objobjwalk", function () {
           }
         }]
       }
-    }, function (obj) {
+    }, obj => {
       if (obj.type === 'deep object') {
         obj.value = '0';
       }
@@ -33,10 +37,10 @@ describe("objobjwalk", function () {
 
 });
 
-describe("objobjwalk.async", function () {
+describe("objobjwalk.async", () => {
   var result, resultExpected;
 
-  it("should find deeply nested object properties", function (done) {
+  it("should find deeply nested object properties", (done) => {
 
     objobjwalk.async({
       a : {
@@ -53,12 +57,12 @@ describe("objobjwalk.async", function () {
           }
         }]
       }
-    }, function (obj, exitFn) {
+    }, (obj, exitFn) => {
       if (obj.type === 'deep object') {
         obj.value = '0';
       }
       exitFn(null, obj);
-    }, function (err, newObj) {
+    }, (err, newObj) => {
       expect(newObj.a.b[0].c.d[0].value).toBe('0');
       expect(newObj.a.b[0].c.e[0].value).toBe('0');
       done();
@@ -67,19 +71,19 @@ describe("objobjwalk.async", function () {
   });
 
 
-  it("should redefine a full object", function (done) {
+  it("should redefine a full object", (done) => {
     objobjwalk.async({
       type: "single",
       inputsArr: [{
         type: "local-ref",
         path: "./support/blog"
       }]
-    }, function (obj, exitFn) {
+    }, (obj, exitFn) => {
       if (obj.type === 'local-ref') {
         obj = 'redefined';
       }
       exitFn(null, obj);
-    }, function (err, newObj) {
+    }, (err, newObj) => {
       expect(newObj.inputsArr[0]).toBe('redefined');
       done();
     });
